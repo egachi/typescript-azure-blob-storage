@@ -16,7 +16,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.put( "/upload", async (req: Request, res: Response) => {
 
-    const containerName = "case-test";
+    const containerName = process.env.CONTAINER_NAME || '';
     const content = req.body;
 
     let requestId = undefined;
@@ -32,7 +32,8 @@ app.put( "/upload", async (req: Request, res: Response) => {
     containerClient = blobServiceClient.getContainerClient(containerName);
 
     try{
-        const blobName = "image1.png";
+        let randomName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        const blobName = `${randomName}.png`;
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
         const uploadBlobResponse = await blockBlobClient.upload(content, content.length);
         console.log(`Upload block blob ${blobName} successfully`, uploadBlobResponse.requestId);
